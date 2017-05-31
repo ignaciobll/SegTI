@@ -1,0 +1,168 @@
+%% \documentclass[11pt,twocolumn]{article}
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\usepackage{blindtext}
+\usepackage{scrextend}
+\usepackage{enumitem}
+
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{tikzscale}
+
+\usepackage{subfigure}
+
+\usepackage{caption}
+
+\title{Análisis del efecto Avalancha sobre RipeMD320}
+
+\author{Ignacio Ballesteros González}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\begin{abstract}
+  Para la realización de la práctica primera de la asignatura de
+  \emph{Seguridad de las Tecnologías de la Información} se ha
+  realizado el análisis del efecto \emph{avalancha} sobre el algoritmo de
+  \emph{hash} \emph{RipeMD320}.
+\end{abstract}
+
+\section{Introducción}
+El algoritmo de \emph{hash RipeMD} se desarrolló en la universidad
+\emph{Katholieke Universiteit Leuven} y se publicó su primera versión
+en 1996. El algoritmo se mejoró en siguientes versiones (\emph{160,
+  256}) para evitar colisiones hasta llegar a la versión
+\emph{RipeMD320} que será la que aquí se analice.
+
+\subsection{Herramientas utilizadas}
+
+Para la posible replicación de este análisis, se detallan las
+herramientas utilizadas en el desarrollo del mismo:
+
+\begin{description}[align=left] %, noitemsep]
+\item  [Java 1.8] Plataforma de desarrollo.
+\item  [Eclipse] Entorno de desarrollo para programación en
+  \emph{Java}. \emph{Neon 3 Release (4.6.3)}
+\item [Bouncy Castle] Librería con funciones
+  criptográficas, entre ellas incluida la necesaria para
+  \emph{RipeMD320}.
+\item [Apache Commons Math] Librería \emph{Java} para cálculos estadísticos.
+\item [\LaTeX] Realización de figuras y de este mismo
+  documento.
+\end{description}
+
+\section{Estructura del análisis}
+
+Para la realización del análisis se ha seguido el siguiente
+procedimiento:
+
+\begin{enumerate}
+\item Comenzamos el análisis con una cadena (\textbf{A}) \emph{pseudo-aleatoria
+  uniformemente distribuida} de 320 \emph{bits}.
+\item Calculamos el \emph{hash RipeMD320} sobre la cadena \textbf{A}.
+\item Variamo un \emph{bit} aleatorio de la cadena \textbf{A}. Esta nueva
+  cadena será la cadena \textbf{B}.
+\item Calculamos el \emph{hash RipeMD320} sobre la cadena \textbf{B}.
+\item Calculamos la \emph{distancia de Hamming} entre el \emph{hash}
+  de la cadena \textbf{A} y \textbf{B}.
+\item Generamos una nueva cadena origen y repetimos estos pasos
+  \emph{n} veces, dependiendo del tamaño de la muestra que queramos
+  analizar.
+\item Aplicamos un análisis sobre las \emph{distancias de Hamming}
+  obtenidas.
+\end{enumerate}
+
+\section{Datos recogidos}
+
+Los análisis se ha realizado según el tamaño de la
+muestra. Los datos estadísticos asociados se presentan en la siguiente
+tabla:
+
+\begin{center}
+  \vspace{-15pt}
+  \label{tab:medidas}
+  \begin{tabular}[c]{| r | *{6}{c} |}
+  \hline
+  Población  & Media  & Moda & Mediana & Desviación & Asimetría & Curtosis \\ \hline
+  10         & 158.36 & 157  & 158     & 7.43       & -0.82     & 3.05     \\
+  100        & 159.93 & 165  & 161     & 8.68       & 0.29      & 0.85     \\
+  1000       & 160.64 & 165  & 161     & 9.10       & -0.11     & -0.23    \\
+  10000      & 160.29 & 161  & 160     & 8.99       & 0.02      & 0.04     \\
+  100000     & 160.23 & 161  & 160     & 8.97       & 0.00      & 0.00     \\
+  1000000    & 160.24 & 161  & 160     & 8.97       & 0.00      & -0.01    \\
+  100000000  & 160.03 & 160  & 160     & 8.97       & 0.00      & 0.00     \\
+  \hline
+  \end{tabular}
+  \captionof{table}{Tabla de medidas estadísticas}
+
+\vspace{-10pt}
+\end{center}
+
+En orden creciente según la población, visualización de los datos en
+un histograma. En el eje $y$ se representan el número de ocurrencias
+de la \emph{distancia de Hamming} dada (eje $x$).
+
+%% Multi plot 2x2
+\begin{figure}[h]
+  \centering
+  \vspace{-10pt}
+  \subfigure[Población de $10$]{\includegraphics[width=0.375\textwidth]{./figures/histograma10.tikz}}
+  \subfigure[Población de $100$]{\includegraphics[width=0.375\textwidth]{./figures/histograma100.tikz}}
+  \\
+  \subfigure[Población de $1000$]{\includegraphics[width=0.375\textwidth]{./figures/histograma1000.tikz}}
+  \subfigure[Población de $10000$]{\includegraphics[width=0.375\textwidth]{./figures/histograma10000.tikz}}
+  \vspace{-10pt}
+  \caption{Histogramas de población pequeña}
+  \vspace{-10pt}
+  \label{fig:small}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \subfigure[Población de $100000$ ]{\includegraphics[width=0.45\textwidth]{./figures/histograma100000.tikz}}
+  \subfigure[Población de $1000000$]{\includegraphics[width=0.4\textwidth]{./figures/histograma1000000.tikz}}
+  \caption{Muestras de población mediana}
+  \label{fig:med}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \vspace{-30pt}
+  \includegraphics[width=\linewidth]{./figures/histograma.tikz}
+  \caption{Muestra de gran tamaño}
+  \vspace{-10pt}
+  \label{fig:big}
+\end{figure}
+
+\section{Valoración de los resultados}
+
+Cuando se trata de comprobar el efecto \emph{avalancha} sobre una
+función \emph{hash} se espera que cuando se cambie una pequeña parte
+de la cadena de entrada (por ejemplo, un \emph{bit}), aproximadamente
+la mitad de los \emph{bits} de la cadena de salida cambien también.
+
+Que solo cambie aproximadamente la mitad de los bits quiere decir que
+la \emph{distancia de Hamming} asociada a la modificación de un solo
+\emph{bit} sea de aproximadamente la \textbf{mitad} de la cadena. En
+en el caso de la función \emph{RipeMD320} las cadenas son de \emph{320
+  bits}, por lo que la \emph{distancia de Hamming} asociada en un
+cambio de \emph{bit} se concentraría cerca de $160$.
+
+Como podemos comprobar según los datos estadísticos del \emph{Cuadro 1}, la
+media, mediana y moda tienden a $160$. Por otro lado, cuanto más
+simétrica sea la distribución, más \emph{uniformemente distribuida} será y
+más se aproximará al comportamiento de un \emph{Oráculo Aleatorio}.
+
+En base a los datos obtenidos de simetría cercana a $0$ (a falta de
+cifras significativas), una curtosis que indica una fuerte proximidad
+a la mediana, la cercanía entre \emph{mediana}, \emph{media} y
+\emph{moda}; \textbf{se determina que la función de \emph{hash
+    RipeMD320} exhibe un fuerte \emph{efecto avalancha}}.
+
+\end{document}
