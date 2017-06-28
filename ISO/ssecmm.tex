@@ -1,0 +1,141 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\title{
+  ISO/IEC 21827\\
+  Systems Security Engineering — Capability Maturity Model® (SSE-CMM®)
+}
+
+\author{\begin{tabular}[center]{c}
+          Ignacio Ballesteros González \\
+          \small w140062 \\
+          \small 05448027V \\
+        \end{tabular}
+      }
+\date{\today}
+
+
+\begin{document}
+\maketitle
+
+A causa del interés de clientes y proveedores en crear un marco que
+proporcione herramientas de mejora en las aplicaciones y principios de
+la ingeniería de la seguridad, \emph{ISO}\footnote{International
+  Organization for Standarization} e \emph{IEC}\footnote{International
+  Electrotechnical Commision} se desarrolla el estándar
+\emph{SSE-CMM®}.
+
+\section{Introducción}q
+\label{sec:introduccion}
+
+El estándar \emph{SSE-CMM®} busca crear una herramienta para las
+organizaciones de ingeniería de la seguridad que sirva para medir sus-
+prácticas, definir mejoras, establecer un indicador de confianza en la
+organización y evaluar la capacidad en seguridad de un proveedor.
+
+Los fines de \emph{SSE-CMM®} es proporcionar un marco en el que los
+productos y procesos desarrollados tengan la capacidad de ser
+continuados y reproducibles. Además de buscar la eficiencia y
+seguridad de los mismos. La \emph{SSE-CMM®} no pretende sustituir los
+procesos de las organizaciones, sino que estos se enmarquen en ella.
+
+La realización de \emph{SSE-CMM®} ha contado con la participación de
+más de 50 organizaciones y con grupos de trabajo pequeños, medianos y
+grandes; además de contar con una evaluación y comentarios de críticos
+independientes.
+
+\section{Arquitectura Modelo}
+\label{sec:arquitectura}
+
+La \emph{SSE-CMM®} divide la ingeniería de seguridad en tres areas
+principales: riesgo, ingeniería y garantía. Estas areas no son
+independientes entre sí.
+
+\begin{description}
+\item[Riesgo] Combinación de amenazas, vulnerabilidades e impacto.
+\item[Ingeniería] Proceso de creación de soluciones enmarcadas en un
+  marco de restricciones y requisitos.
+\item[Garantía] Grado de confianza que satisface según \emph{NIST94a}.
+\end{description}
+
+\subsection{Modelo básico}
+\label{sec:basico}
+
+La \emph{SSE-CMM®} tiene dos dimensiones, \emph{dominio} y
+\emph{capacidad}. El \emph{dominio} se compone de todas las prácticas
+que colectivamente definen la ingeniería de la seguridad. La
+\emph{capacidad} representa prácticas de los modelos de gestión.
+
+Estas dos dimensiones se distribuyen en un modelo matricial que
+permite ubicar la capacidad técnica de ingeniería de la seguridad de
+una organización.
+
+La \emph{SSE-CMM®} enumera una serie de prácticas y procesos que se
+relacionan con el \emph{ciclo de vida} de un proceso.
+
+\subsection{Prácticas básicas}
+\label{sec:practicas}
+
+La \emph{SSE-CMM®} enumera y describe las prácticas básicas que hay en
+un proceso de seguridad. Sin embargo, no especifica que toda
+organización deba poseer o evaluar todas ellas, ya que puede que tenga
+una sola o una mezcla de varias.
+
+La \emph{SSE-CMM®} menciona 11 prácticas básicas, ampliadas
+posteriormente en un anexo.
+
+\begin{description}
+\item[Administración de controles de seguridad] Asegurarse de que se
+  cumplen los procesos de control de seguridad. Se contempla la
+  asignación de responsabilidades, la eduación en seguridad y la
+  responsabilidad de revisar el cumplimiento de los requisitos.
+\item[Evaluación del impacto] Identificación de posibles impactos que
+  puede ocasionar los riesgos, ya sea de manera tangible (financión) o
+  intagible (reputación). Se realizan listas de prioridades,
+  evaluaciones y métricas de impactos. Incluye la identificación y
+  monitorización de los mismos.
+\item[Evaluación de los riesgos] Identifica, analiza y evalúa los
+  riesgos en seguridad en los que se pueda ver envualta la
+  organización. Se selecciona un método de evaluación, evalúa el nivel
+  de exposición y su certeza\footnote{Métrica de que realmente
+    ocurra.}. Incluye también la priorización de riesgos y su
+  monitorización. 
+\item[Evaluación de las amenazas] Identifica las amenazas en la
+  seguridad, sus propiedades y caracteristicas. Incluye la
+  identificación de amenazas naturales, humanas, métricas, capacidad
+  de respuesta y la probabilidad de suceder. También la monitorización
+  y sus características.
+\item[Evaluación de vulnerabilidades] Se identifican las
+  vulnerabilidades a las que se enfrente la organzación, eligiendo
+  unos métodos, técnicas y criterios para caracterizarlas. Recolecta
+  la información relacionada con las vulnerabilidades y monitoriza sus
+  cambios.
+\item[Construcción de un argumento de aseguración] Proceso para
+  convencer al cliente de la seguridad propia. Se identifican los 
+  objetivos, las medidas de control y monitorización. Recoge
+  evidencias y realiza análisis sobre ellas. Con ello se contruye el
+  argumento acerca de la propia seguridad.
+\item[Coordinación de la seguridad] Se asegura de que todas las partes
+  son conscientes y están involucradas en las actividades de
+  ingeniería de la seguridad. Define la coordinación, sus mecanismos y
+  facilitación de los mismos.
+\item[Monitorización de la postura en la seguridad] Se asegura de que
+  todos los fallos son identificados y comunicados.
+\item[Proporcionar información en seguridad] Proporciona a arquitectos,
+  diseñadores, implementadores y/o usuarios la información que
+  necesitan.
+\item[Especificación de las necesidades de seguridad] Indentifica y
+  relaciona las necesidades acerca del sistema. Define las bases en
+  seguridad para satisfacer los requisitos legales, políticos y
+  organizativos.
+\item[Verificación y validación de la seguridad] Se asegura del
+  cumplimiento de los compromisos adquiridos.
+\end{description}
+
+La \emph{SSE-CMM®} define además otros procesos organizativos en
+anexos, continuación de los aquí descritos.
+
+\end{document}
