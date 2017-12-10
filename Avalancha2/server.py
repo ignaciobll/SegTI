@@ -14,7 +14,7 @@ x = new(key, mode=MODE_OFB, IV="12345678")
 
 
 HOST = 'localhost'
-PORT = 4443
+PORT = 4444
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print 'Socket created...'
@@ -37,16 +37,24 @@ def client_thread(conn):
         if not data:
             break
 
-        (key, iv, text) = data.decode().strip('\n').split('\t')
+        (key, iv, text) = data.strip('\n').split('\t')
+
+        # print "="*30
+        # print data
+        # print str(len(key)) + "\t" + key
+        # print str(len(iv))  + "\t" + iv
+        # print str(len(text))+ "\t" + text
+        # print "-"*30
         
         response = ""
         
         if key != "" and text != "":
-            if correct_params(key, iv):
-                x = new(key, mode=MODE_OFB, IV=iv)
-                response = x.encrypt(text)
-                print "\tReceived: " + text
+            # if correct_params(key, iv):
+            x = new(key, mode=MODE_OFB, IV=iv)
+            response = x.encrypt(text)
+            print "\tReceived: " + text
 
+        # print "="*30
         conn.sendall(response)
 
 
