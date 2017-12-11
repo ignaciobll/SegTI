@@ -1,6 +1,8 @@
 % \documentclass[11pt,twocolumn]{article}
 \documentclass[11pt,a4paper]{article}
 
+\usepackage[a4paper]{geometry}
+
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
 
@@ -16,6 +18,8 @@
 \usepackage[subpreambles=true]{standalone}
 
 \usepackage{subfigure}
+
+\usepackage{float}
 
 \usepackage{caption}
 
@@ -80,37 +84,97 @@ procedimiento:
 
 \section{Datos recogidos}
 
-Los análisis se ha realizado según el tamaño de la
-muestra. Los datos estadísticos asociados se presentan en la siguiente
-tabla:
+El cifrado \emph{XTEA} trabaja con bloques de $128$ \emph{bits}. Por
+este motivo, hemos elegido una generación de cadenas de entrada de 128
+\emph{bits} (16 \emph{bytes}) para estudiar el efecto avalancha.
+
+Durante sucesivas iteraciones con distintos tamaños de muestra, cuando
+nos acercamos a las 500 cadenas de muestra, el error de la varianza
+desciende por debajo del $5\%$.
+
+Dado que el cifrado tiene 3 parámetros de entrada (clave, vector
+inicial, texto a cifrar), el estudio del efecto avalancha lo tendremos
+que hacer sobre variaciones en estos 3 parámetros.
+
+\subsection{Variación del texto de entrada}
+
+Los datos recogidos variando en un \emph{bit} el texto a cifrar (y manteniendo clave y vector inicial) son los siguientes:
 
 \begin{center}
-  \vspace{-15pt}
-  \label{tab:medidas}
+  \label{tab:text}
   \begin{tabular}[c]{| r | *{6}{c} |}
   \hline
-  Población  & Media  & Moda & Mediana & Desviación & Asimetría & Curtosis \\ \hline
-  10         & 158.36 & 157  & 158     & 7.43       & -0.82     & 3.05     \\
-  100        & 159.93 & 165  & 161     & 8.68       & 0.29      & 0.85     \\
-  1000       & 160.64 & 165  & 161     & 9.10       & -0.11     & -0.23    \\
-  10000      & 160.29 & 161  & 160     & 8.99       & 0.02      & 0.04     \\
-  100000     & 160.23 & 161  & 160     & 8.97       & 0.00      & 0.00     \\
-  1000000    & 160.24 & 161  & 160     & 8.97       & 0.00      & -0.01    \\
-  100000000  & 160.03 & 160  & 160     & 8.97       & 0.00      & 0.00     \\
+    Muestra & Media & Mediana & Desviación & Variance & Asimetría & Curtosis \\ \hline
+    500.00  & 1.00  &  1.00   & 0	   &   0      &  0	  & -3.00    \\
   \hline
   \end{tabular}
   \captionof{table}{Tabla de medidas estadísticas}
-
-\vspace{-10pt}
 \end{center}
 
+Es muy llamativo cómo nos encontramos con unos datos muy distintos a
+los posibles esperados cuando se produce un efecto avalancha. Que no haya desviación, ni varianza y la distribución sea simétrica, implica que todos los valores se encuentran en 1. Es decir, cuando se modifica un bit en la entrada, solo se modifica un bit en la salida. En la figura 1 se puede observar cómo la distribución del histograma dista mucho de ser binomial. De hecho, en todos los casos comprobados, la variación es un único \emph{bit}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
-  \includestandalone[mode=buildnew]{./img/test}
-  \caption{Análisis sobre una población de 1000}
+  \label{fig:text}
+  \includestandalone[mode=buildnew]{./img/text500}
+  \caption{Análisis sobre una población de 500}
 \end{figure}
 
+\subsection{Variación en la clave}
+
+Con una variación de un \textbf{bit} en la clave de cifrado y manteniendo el texto de entrada original obtenemos los siguientes datos:
+
+\begin{center}
+  \label{tab:key}
+  \begin{tabular}[c]{| r | *{6}{c} |}
+  \hline
+    Muestra & Media & Mediana & Desviación & Variance & Asimetría & Curtosis \\ \hline
+    500.00  & 64.27 &   64.00 &       5.55 &    30.83 &      0.08 &     0.15 \\
+  \hline
+  \end{tabular}
+  \captionof{table}{Tabla de medidas estadísticas}
+\end{center}
+
+Y el con el histograma en la figura 2.
+
+\begin{figure}[H]
+  \centering
+  \label{fig:key}
+  \includestandalone[mode=buildnew]{./img/key500}
+  \caption{Análisis sobre una población de 500}
+\end{figure}
+
+Si nos fijamos en los errores obtenidos respecto a una distribución
+binomial $(p = 128, n = 0.5)$, el error en la varianza es del 0,036 $(3'6\%)$
+
+
+\subsection{Variación en el vector inicial}
+
+Con una variación de un \textbf{bit} en el vector de inicialización y manteniendo el texto de entrada original obtenemos los siguientes datos:
+
++\begin{center}
+  \label{tab:vi}
+  \begin{tabular}[c]{| r | *{6}{c} |}
+  \hline
+    Muestra & Media & Mediana & Desviación & Variance & Asimetría & Curtosis \\ \hline
+    500.00 &  64.31 &   64.00 &       5.66 &    32.04 &     -0.09 &     0.34 \\
+  \hline
+  \end{tabular}
+  \captionof{table}{Tabla de medidas estadísticas}
+\end{center}
+
+Y el con el histograma en la figura 2.
+
+\begin{figure}[H]
+  \centering
+  \label{fig:vi}
+  \includestandalone[mode=buildnew]{./img/vi500}
+  \caption{Análisis sobre una población de 500}
+\end{figure}
+
+En el caso del vector inicial, el error en la varianza obtenido es de
+$0.1\%$. Una aproximación muy buena para la binomial.
 
 \section{Valoración de los resultados}
 
@@ -128,5 +192,16 @@ cambio de \emph{bit} se concentraría cerca de $64$. Este análisis se
 ha hecho con esta longitud de cadena porque el cifrado toma bloques de
 \emph{128 bits}.
 
+El resultado arrojado por la variación de un \emph{bit} en la cadena
+de texto de entrada provoca que solo se cambie un \emph{bit} en la
+cadena de salida. Esto indica que no hay un buen efecto avalancha en
+el cifrado.
+
+Sin embargo, si nos centramos en el cambio de un \emph{bit} en la
+clave o en el vector inicial, observamos que el efecto avalancha se
+produce satisfactoriamente.
+
+Con estos resultados, podemos decir que el cifrado \emph{XTEA} posee
+parcialmente la propiedad del efecto avalancha.
 
 \end{document}

@@ -1,3 +1,4 @@
+import sys
 import random
 import string
 import client as c
@@ -112,6 +113,14 @@ def do_statistics(histogram, latex=False):
     print("Simetría:\t{}".format(sk))
     print("Kurtosis:\t{}\t(Err) {}".format(ku, kurt_err))
 
+    if latex:
+        print("\n\nLaTeX\n")
+        print(" &".join("{:>11}".format(x) for x in ["Muestra", "Media", "Mediana", "Desviación", "Variance", "Asimetría", "Curtosis"]), "\\\\ \\hline")
+        print(" &".join("{:>11.2f}".format(x) for x in [STUDY_SIZE, mean, median, stdev, variance, sk, ku]), "\\\\")
+        print("\n\n")
+        print(list(enumerate(histogram)))
+        print("\n\n")
+
 
 if __name__ == "__main__":
     print("""
@@ -126,14 +135,16 @@ Los parámetros iniciales son:
 - Tamaño de la muestra:\t{}
 """.format(KEY_SIZE, IV_SIZE, TEXT_SIZE, STUDY_SIZE))
 
+    latex = "--latex" in sys.argv
+    
     histogram = do_analisis()
     print("Análisis estadístico sobre la variación del texto de entrada")
-    do_statistics(histogram[0])
+    do_statistics(histogram[0], latex=latex)
 
     print("Análisis estadístico sobre la variación de la clave")
-    do_statistics(histogram[1])
+    do_statistics(histogram[1], latex=latex)
 
     print("Análisis estadístico sobre la variación del vector inicial")
-    do_statistics(histogram[2])
+    do_statistics(histogram[2], latex=latex)
 
     c.s.close()
