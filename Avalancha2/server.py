@@ -37,7 +37,7 @@ def client_thread(conn):
         if not data:
             break
 
-        (key, iv, text) = data.strip('\n').split('\t')
+        (key, iv, text) = data.strip('\n').split('#!#')
 
         # print "="*30
         # print data

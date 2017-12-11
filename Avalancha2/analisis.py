@@ -1,12 +1,14 @@
 import random
 import string
 import client as c
+import statistics as s
+from scipy.stats import skew, kurtosis, binom
 
 KEY_SIZE = 16
 IV_SIZE = 8
 TEXT_SIZE = 16
 
-STUDY_SIZE = 10
+STUDY_SIZE = 500
 
 
 def random_string(size=16):
@@ -16,7 +18,6 @@ def random_string(size=16):
 
 
 def hamming(s1, s2):
-    print("{}\n{}".format(s1,s2))
     return sum(c1 != c2 for c1, c2 in zip(s1, s2))
 
 
@@ -34,10 +35,11 @@ def flip_bit(bytestring):
     b[pos] = b[pos] ^ (1 << index)
     return bytes(b)
 
-def do_analisis(size=STUDY_SIZE):
+
+def do_analisis(size=STUDY_SIZE, debug=False):
     histogram = [[0] * 128, [0] * 128, [0] * 128]
     for _ in range(size):
-        print("###\t{}\t{}\t{}\t###".format(histogram[0][1], histogram[1][1], histogram[2][1]))
+
         # Origin
         (k, iv, text) = gen_study_case()
         r = c.cipher(k, iv, text)
@@ -48,8 +50,8 @@ def do_analisis(size=STUDY_SIZE):
         rtf = c.cipher(k, iv, textf)  # Response text flipped
         srtf = "".join("{0:08b}".format(x) for x in rtf)
 
-        h = hamming(sr,srtf)
-        print("Hamming srtf: {}".format(h))
+        h = hamming(sr, srtf)
+
         histogram[0][h] = histogram[0][h] + 1
 
         # Key flipped
@@ -57,8 +59,7 @@ def do_analisis(size=STUDY_SIZE):
         rkf = c.cipher(kf, iv, text)
         srkf = "".join("{0:08b}".format(x) for x in rkf)
 
-        h = hamming(sr,srkf)
-        print("Hamming srkf: {}".format(h))
+        h = hamming(sr, srkf)
         histogram[1][h] += 1
 
         # Inital Block Value
@@ -66,9 +67,73 @@ def do_analisis(size=STUDY_SIZE):
         rvf = c.cipher(k, vf, text)
         srvf = "".join("{0:08b}".format(x) for x in rvf)
 
-        h = hamming(sr,srvf)
-        print("Hamming srvf: {}".format(h))
+        h = hamming(sr, srvf)
         histogram[2][h] += 1
 
-        print("===\t{}\t{}\t{}\t===".format(histogram[0][1], histogram[1][1], histogram[2][1]))
     return histogram
+
+
+############# STATISTICS #################### 
+
+
+def gen_data(histogram):
+    data = []
+    for index, value in enumerate(histogram):
+        for _ in range(value):
+            data.append(index)
+    return data
+
+
+def do_statistics(histogram, latex=False):
+    data = gen_data(histogram)
+
+    emean, evar, eskew, ekurt = binom.stats(TEXT_SIZE*8, 0.5, moments='mvsk')
+    estd = binom.std(TEXT_SIZE*8, 0.5)
+
+    mean = s.mean(data)
+    median = s.median(data)
+
+    # We will use sample versions because we don't have all the population
+    stdev = s.stdev(data)
+    variance = s.variance(data)
+
+    sk = skew(data)
+    ku = kurtosis(data)
+
+    mean_err = abs(emean - mean) / emean
+    std_err = abs(estd - stdev) / estd
+    var_err = abs(evar - variance) / evar
+    kurt_err = abs(ekurt - ku) / ekurt
+
+    print("Media:\t\t{}\t\t\t(Err) {}".format(mean, mean_err))
+    print("Mediana:\t{}".format(median))
+    print("Desv. Std.:\t{}\t(Err) {}".format(stdev, std_err))
+    print("Varianza.:\t{}\t(Err) {}".format(variance, var_err))
+    print("Simetría:\t{}".format(sk))
+    print("Kurtosis:\t{}\t(Err) {}".format(ku, kurt_err))
+
+
+if __name__ == "__main__":
+    print("""
+Encriptemos cositas :D
+
+Los parámetros iniciales son:
+
+- Tamaño de la clave:\t\t{}
+- Tamaño de vector inicial:\t{}
+- Tamaño de bloque:\t\t{}
+
+- Tamaño de la muestra:\t{}
+""".format(KEY_SIZE, IV_SIZE, TEXT_SIZE, STUDY_SIZE))
+
+    histogram = do_analisis()
+    print("Análisis estadístico sobre la variación del texto de entrada")
+    do_statistics(histogram[0])
+
+    print("Análisis estadístico sobre la variación de la clave")
+    do_statistics(histogram[1])
+
+    print("Análisis estadístico sobre la variación del vector inicial")
+    do_statistics(histogram[2])
+
+    c.s.close()
