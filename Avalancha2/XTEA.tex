@@ -1,13 +1,19 @@
-%% \documentclass[11pt,twocolumn]{article}
+% \documentclass[11pt,twocolumn]{article}
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
 
+\usepackage{blindtext}
+\usepackage{scrextend}
+\usepackage{enumitem}
+
 \usepackage{graphicx}
 \usepackage{pgfplots}
 \usepackage{tikz}
 \usepackage{tikzscale}
+
+\usepackage[subpreambles=true]{standalone}
 
 \usepackage{subfigure}
 
@@ -29,7 +35,11 @@
   cifrado \emph{XTEA}.
 \end{abstract}
 
-\section{Herramientas utilizadas}
+\section{Introducción}
+
+El algoritmo \texttt{XTEA} fue desarrollado...
+
+\subsection{Herramientas utilizadas}
 
 Para la posible replicación de este análisis, se detallan las
 herramientas utilizadas en el desarrollo del mismo:
@@ -38,9 +48,85 @@ herramientas utilizadas en el desarrollo del mismo:
 \item [Python 2 y 3] Plataforma de desarrollo.
 \item [Emacs] Entorno de desarrollo para programación en \emph{Python}. \emph{Emacs 25.3.2}
 \item [xtea] Implementación del algoritmo de cifrado \emph{xtea}. \emph{xtea (0.4.0)}
-\item [as] Librería \emph{Python} para cálculos estadísticos.
+\item [scipy] Librería \emph{Python} para cálculos estadísticos.
 \item [\LaTeX] Realización de figuras y de este mismo documento.
 \end{description}
+
+\section{Estructura del análisis}
+
+Para la realización del análisis se ha seguido el siguiente
+procedimiento:
+
+\begin{enumerate}
+\item Generamos una muestra de estudio (\emph{pseudo-aleatoria}) compuesta de una clave
+  \textbf{(K)}, un vector de inicialización \textbf{(VI)} y un texto a
+  cifrar \textbf{(T)}.
+\item Realizamos un cifrado con \emph{XTEA} para obtener la cadena
+  cifrada \textbf{C}.
+\item Para comprobar los distintos efectos avalancha modificamos un
+  bit en la clave, el vector inicial y el texto \textbf{(K', VI',
+    T')}.
+\item Para cada modificación, se aplica de nuevo el cifrado con las
+  combinaciones de clave, vector inicial y texto:
+  \begin{itemize}
+  \item (K, VI, T')
+  \item (K, VI', T)   
+  \item (K', VI, T)
+  \end{itemize}
+\item Por cada resultado del cifrado, se calcula la distancia de
+  Hamming con respecto a la cadena cifrada original \textbf{C}.
+\item Aplicamos un análisis estadístico sobre los histogramas generados.
+\end{enumerate}
+
+\section{Datos recogidos}
+
+Los análisis se ha realizado según el tamaño de la
+muestra. Los datos estadísticos asociados se presentan en la siguiente
+tabla:
+
+\begin{center}
+  \vspace{-15pt}
+  \label{tab:medidas}
+  \begin{tabular}[c]{| r | *{6}{c} |}
+  \hline
+  Población  & Media  & Moda & Mediana & Desviación & Asimetría & Curtosis \\ \hline
+  10         & 158.36 & 157  & 158     & 7.43       & -0.82     & 3.05     \\
+  100        & 159.93 & 165  & 161     & 8.68       & 0.29      & 0.85     \\
+  1000       & 160.64 & 165  & 161     & 9.10       & -0.11     & -0.23    \\
+  10000      & 160.29 & 161  & 160     & 8.99       & 0.02      & 0.04     \\
+  100000     & 160.23 & 161  & 160     & 8.97       & 0.00      & 0.00     \\
+  1000000    & 160.24 & 161  & 160     & 8.97       & 0.00      & -0.01    \\
+  100000000  & 160.03 & 160  & 160     & 8.97       & 0.00      & 0.00     \\
+  \hline
+  \end{tabular}
+  \captionof{table}{Tabla de medidas estadísticas}
+
+\vspace{-10pt}
+\end{center}
+
+
+\begin{figure}[h]
+  \centering
+  \includestandalone[mode=buildnew]{./img/test}
+  \caption{Análisis sobre una población de 1000}
+\end{figure}
+
+
+\section{Valoración de los resultados}
+
+Cuando se trata de comprobar el efecto \emph{avalancha} sobre una
+función de cifrado se espera que cuando se cambie una pequeña parte
+de la cadena de entrada (por ejemplo, un \emph{bit}), aproximadamente
+la mitad de los \emph{bits} de la cadena de salida cambien también.
+
+Que solo cambie aproximadamente la mitad de los bits quiere decir que
+la \emph{distancia de Hamming} asociada a la modificación de un solo
+\emph{bit} sea de aproximadamente la \textbf{mitad} de la cadena. En
+en el caso de la función \emph{XTEA} las cadenas son de \emph{128
+  bits}, por lo que la \emph{distancia de Hamming} asociada en un
+cambio de \emph{bit} se concentraría cerca de $64$. Este análisis se
+ha hecho con esta longitud de cadena porque el cifrado toma bloques de
+\emph{128 bits}.
 
 
 \end{document}
